@@ -5,6 +5,7 @@ using LikesHikes.Application.Logic.Routs.RemoveRout;
 using LikesHikes.Application.Logic.Routs.RemoveRouteReview;
 using LikesHikes.Application.Models;
 using LikesHikes.Domain.Entities;
+using LikesHikes.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -49,16 +50,16 @@ namespace LikesHikes.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetAllRoutes")]
-        public async Task<IEnumerable<RouteShortModel>> GetAllRoutes([FromBody] GetAllRoutesRequest request)
+        public async Task<IEnumerable<RouteShortModel>> GetAllRoutes([FromQuery]RouteFilterModel filter)
         {
-            return await mediator.Send(request);
+            return await mediator.Send(new GetAllRoutesRequest { RouteFilter = filter });
         }
 
         [AllowAnonymous]
-        [HttpGet("GetRouteById")]
-        public async Task<RouteDetailModel> GetRouteById([FromBody] GetRouteByIdRequest request)
+        [HttpGet("GetRoute/{id}")]
+        public async Task<RouteDetailModel> GetRouteById([FromRoute] Guid id)
         {
-            return await mediator.Send(request);
+            return await mediator.Send(new GetRouteByIdRequest {Id = id });
         }
 
         [HttpDelete("RemoveRoute")]

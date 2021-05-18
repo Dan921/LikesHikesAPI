@@ -22,7 +22,7 @@ namespace LikesHikes.Application.Logic.Routs.RemoveRout
             var route = await unitOfWork.RouteRepository.GetById(request.Id);
             if (route == null)
             {
-                throw new Exception("Could not find route");
+                throw new ApplicationException("Could not find route");
             }
             await unitOfWork.RouteRepository.Remove(request.Id);
 
@@ -32,7 +32,7 @@ namespace LikesHikes.Application.Logic.Routs.RemoveRout
                 return Unit.Value;
             }
 
-            throw new Exception("Some problem"); 
+            throw new ApplicationException("Some problem"); 
         }
     }
 }

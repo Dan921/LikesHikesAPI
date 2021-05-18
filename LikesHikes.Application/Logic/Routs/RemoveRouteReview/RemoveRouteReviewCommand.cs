@@ -32,7 +32,7 @@ namespace LikesHikes.Application.Logic.Routs.RemoveRouteReview
                 return Unit.Value;
             }
 
-            throw new Exception("Some problem");
+            throw new ApplicationException("Some problem");
         }
     }
 }

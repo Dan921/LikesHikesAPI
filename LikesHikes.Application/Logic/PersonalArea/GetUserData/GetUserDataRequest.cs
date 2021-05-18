@@ -1,4 +1,5 @@
 ﻿using LikesHikes.Domain.Entities;
+using LikesHikes.Domain.Models;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,7 @@ namespace LikesHikes.Application.Logic.PersonalArea.GetUserData
         public Guid? AppUserId { get; set; }
 
         public bool OnlyPassedRoutes { get; set; }
+
+        //public RouteFilterModel RouteFilter { get; set; }
     }
 }

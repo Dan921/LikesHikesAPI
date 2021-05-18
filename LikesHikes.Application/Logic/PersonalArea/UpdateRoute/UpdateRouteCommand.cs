@@ -61,9 +61,9 @@ namespace LikesHikes.Application.Logic.Routs.UpdateRout
             }
             else
             {
-                throw new Exception("The user does not have this route");
+                throw new ApplicationException("The user does not have this route");
             }
-            throw new Exception("Some problem");
+            throw new ApplicationException("Some problem");
         }
     }
 }

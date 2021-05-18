@@ -6,8 +6,8 @@ namespace LikesHikes.Domain.Models
 {
     public enum Complexity
     {
-        Difficult,
         Easy,
-        Medium
+        Medium,
+        Difficult
     }
 }

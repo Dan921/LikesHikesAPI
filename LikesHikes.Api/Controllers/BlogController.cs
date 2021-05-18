@@ -47,10 +47,10 @@ namespace LikesHikes.Api.Controllers
             return await mediator.Send(request);
         }
 
-        [HttpGet("Posts")]
-        public async Task<ActionResult<GetBlogPostsResult>> GetBlogPost([FromBody] GetBlogPostsRequest request)
+        [HttpGet("Posts/page={page}")]
+        public async Task<ActionResult<GetBlogPostsResult>> GetBlogPost([FromRoute] int page)
         {
-            return await mediator.Send(request);
+            return await mediator.Send(new GetBlogPostsRequest { Page = page });
         }
 
         [HttpGet("Posts/{id}")]

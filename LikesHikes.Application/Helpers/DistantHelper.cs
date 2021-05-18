@@ -13,10 +13,10 @@ namespace LikesHikes.Application.Helpers
             double dist = 0;
             for (int i = 0; i < coordinates.Count - 1; i++)
             {
-                double lat1 = double.Parse(coordinates[i].lat, CultureInfo.InvariantCulture) * Math.PI / 180;
-                double lat2 = double.Parse(coordinates[i + 1].lat, CultureInfo.InvariantCulture) * Math.PI / 180;
-                double long1 = double.Parse(coordinates[i].lng, CultureInfo.InvariantCulture) * Math.PI / 180;
-                double long2 = double.Parse(coordinates[i + 1].lng, CultureInfo.InvariantCulture) * Math.PI / 180;
+                double lat1 = coordinates[i].lat * Math.PI / 180;
+                double lat2 = coordinates[i + 1].lat * Math.PI / 180;
+                double long1 = coordinates[i].lng * Math.PI / 180;
+                double long2 = coordinates[i + 1].lng * Math.PI / 180;
                 double cl1 = Math.Cos(lat1);
                 double cl2 = Math.Cos(lat2);
                 double sll = Math.Sin(lat1);

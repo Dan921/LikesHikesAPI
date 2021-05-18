@@ -82,14 +82,13 @@ namespace LikesHikes.Api.Controllers
             }
         }
 
-        [HttpGet("GetReport")]
-        public async Task<ReportModel> GetReport([FromBody] GetReportRequest request)
+        [HttpGet("GetReport/route={id}")]
+        public async Task<ReportModel> GetReport([FromRoute] Guid id)
         {
             try
             {
                 var user = await userManager.GetUserAsync(User);
-                request.AppUserId = user.Id;
-                return await mediator.Send(request);
+                return await mediator.Send(new GetReportRequest { RouteId = id, AppUserId = user.Id });
             }
             catch
             {
@@ -98,13 +97,12 @@ namespace LikesHikes.Api.Controllers
         }
 
         [HttpGet("GetUserData")]
-        public async Task<GetUserDataResult> GetUserData([FromBody] GetUserDataRequest request)
+        public async Task<GetUserDataResult> GetUserData([FromQuery] bool OnlyPassedRoutes = false)
         {
             try
             {
                 var user = await userManager.GetUserAsync(User);
-                request.AppUserId = user.Id;
-                return await mediator.Send(request);
+                return await mediator.Send(new GetUserDataRequest { AppUserId = user.Id, OnlyPassedRoutes = OnlyPassedRoutes });
             }
             catch
             {

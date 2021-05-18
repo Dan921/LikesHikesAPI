@@ -28,6 +28,11 @@ namespace LikesHikes.Application.Logic.User.Registration
 
 		public async Task<UserAuthModel> Handle(RegistrationRequest request, CancellationToken cancellationToken)
 		{
+			if(request.Password != request.ConfirmPassword)
+            {
+				throw new ApplicationException("Password mismatch");
+			}
+
 			if (await _context.Users.Where(x => x.Email == request.Email).AnyAsync())
 			{
 				throw new Exception("Email already exist");
