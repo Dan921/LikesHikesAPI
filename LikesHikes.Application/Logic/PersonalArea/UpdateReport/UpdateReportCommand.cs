@@ -1,4 +1,5 @@
-﻿using LikesHikes.Application.Models;
+﻿using Application.Exceptions;
+using LikesHikes.Application.Models;
 using LikesHikes.Domain;
 using MediatR;
 using System;
@@ -28,23 +29,20 @@ namespace LikesHikes.Application.Logic.PersonalArea.UpdateReport
             if (userRoute != null)
             {
 
-                if(userRoute.ReportId != request.ReportId)
+                if(userRoute.Report != null)
                 {
-                    throw new ApplicationException("The route does not have such a report");
+                    throw new RestException("Такого отчета нет");
                 }
 
-                var report = await unitOfWork.ReportRepository.GetById(request.ReportId);
-                if (report == null)
-                {
-                    throw new ApplicationException("Could not find report");
-                }
+                var report = await unitOfWork.ReportRepository.GetById((Guid)userRoute.ReportId);
 
-                report.Name = request.Name;
+                report.Name = request.ReportName;
                 report.Text = request.Text;
 
                 await unitOfWork.ReportRepository.Update(report);
 
                 var success = await unitOfWork.SaveAsync() > 0;
+
                 if (success)
                 {
                     return new ReportModel(report);
@@ -52,9 +50,10 @@ namespace LikesHikes.Application.Logic.PersonalArea.UpdateReport
             }
             else
             {
-                throw new Exception("The user does not have this route");
+                throw new RestException("У пользователя нет такого маршрута");
             }
-            throw new Exception("Some problem");
+
+            throw new Exception();
         }
     }
 }

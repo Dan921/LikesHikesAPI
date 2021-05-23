@@ -1,4 +1,6 @@
-﻿using LikesHikes.Application.Logic.Blog.CreateBlogPost;
+﻿using Application.Exceptions;
+using LikesHikes.Api.Attributes;
+using LikesHikes.Application.Logic.Blog.CreateBlogPost;
 using LikesHikes.Application.Logic.Blog.CreateBlogPostComment;
 using LikesHikes.Application.Logic.Blog.GetBlogPostById;
 using LikesHikes.Application.Logic.Blog.GetBlogPosts;
@@ -7,9 +9,11 @@ using LikesHikes.Application.Logic.Blog.RemoveBlogPostComment;
 using LikesHikes.Application.Logic.Blog.UpdateBlogPost;
 using LikesHikes.Application.Models;
 using LikesHikes.Domain.Entities;
+using LikesHikes.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,55 +39,52 @@ namespace LikesHikes.Api.Controllers
             this.userManager = userManager;
         }
 
+        [AuthorizeRoles(UserRole.Admin)]
         [HttpPost("Create")]
-        public async Task<ActionResult<Unit>> CreateBlogPost([FromBody] CreateBlogPostRequest request)
+        public async Task<IActionResult> CreateBlogPost([FromBody] CreateBlogPostRequest request)
         {
-            return await mediator.Send(request);
+            return Ok(await mediator.Send(request));
         }
 
+        [AuthorizeRoles(UserRole.Admin)]
         [HttpDelete("Delete")]
-        public async Task<ActionResult<Unit>> DeleteBlogPost([FromBody] RemoveBlogPostRequest request)
+        public async Task<IActionResult> DeleteBlogPost([FromQuery] Guid routeId)
         {
-            return await mediator.Send(request);
+            return Ok(await mediator.Send(new RemoveBlogPostRequest { Id = routeId }));
         }
 
-        [HttpGet("Posts/page={page}")]
-        public async Task<ActionResult<GetBlogPostsResult>> GetBlogPost([FromRoute] int page)
+        [AllowAnonymous]
+        [HttpGet("Posts")]
+        public async Task<IActionResult> GetBlogPost([FromQuery] int page = 1)
         {
-            return await mediator.Send(new GetBlogPostsRequest { Page = page });
+            return Ok(await mediator.Send(new GetBlogPostsRequest { Page = page }));
         }
 
-        [HttpGet("Posts/{id}")]
-        public async Task<ActionResult<BlogPostDetailModel>> GetBlogPostById([FromRoute] Guid id)
+        [AllowAnonymous]
+        [HttpGet("Post")]
+        public async Task<IActionResult> GetBlogPostById([FromQuery] Guid id)
         {
-            return await mediator.Send(new GetBlogPostByIdRequest{ Id = id });
+            return Ok(await mediator.Send(new GetBlogPostByIdRequest { Id = id }));
         }
 
+        [AuthorizeRoles(UserRole.Admin)]
         [HttpPut("Edit")]
-        public async Task<ActionResult<BlogPostDetailModel>> UpdateBlogPost([FromBody] UpdateBlogPostRequest request)
+        public async Task<IActionResult> UpdateBlogPost([FromBody] UpdateBlogPostRequest request)
         {
-            return await mediator.Send(request);
+            return Ok(await mediator.Send(request));
         }
 
         [HttpPost("CreateComment")]
-        public async Task<ActionResult<Unit>> CreateBlogPostComment([FromBody] CreateBlogPostCommentRequest request)
+        public async Task<IActionResult> CreateBlogPostComment([FromBody] CreateBlogPostCommentRequest request)
         {
-            try
-            {
-                var user = await userManager.GetUserAsync(User);
-                request.UserId = user.Id;
-                return await mediator.Send(request);
-            }
-            catch
-            {
-                throw new ApplicationException("User is not found");
-            }
+            request.UserId = (await userManager.GetUserAsync(User))?.Id;
+            return Ok(await mediator.Send(request));
         }
 
-        [HttpDelete("Comments/{id}/Delete")]
-        public async Task<ActionResult<Unit>> RemoveBlogPostComment([FromRoute] Guid id)
+        [HttpDelete("RemoveComment")]
+        public async Task<IActionResult> RemoveBlogPostComment([FromQuery] Guid id)
         {
-            return await mediator.Send(new RemoveBlogPostCommentRequest { Id = id });
+            return Ok(await mediator.Send(new RemoveBlogPostCommentRequest { Id = id }));
         }
     }
 }

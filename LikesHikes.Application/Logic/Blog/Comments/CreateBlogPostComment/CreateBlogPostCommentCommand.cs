@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using LikesHikes.Domain.Entities;
 using MediatR;
 using System;
@@ -20,21 +21,29 @@ namespace LikesHikes.Application.Logic.Blog.CreateBlogPostComment
 
         public async Task<Unit> Handle(CreateBlogPostCommentRequest request, CancellationToken cancellationToken)
         {
-            var blogPostComment = new BlogPostComment()
+            if (request.UserId != null)
             {
-                BlogPostId = request.PostId,
-                AppUserId = (Guid)request.UserId,
-                Text = request.Text,
-                Time = DateTime.Now
-            };
+                var blogPostComment = new BlogPostComment()
+                {
+                    BlogPostId = request.PostId,
+                    AppUserId = (Guid)request.UserId,
+                    Text = request.Text,
+                    Time = DateTime.Now
+                };
 
-            await unitOfWork.BlogPostCommentRepository.Create(blogPostComment);
-            var success = await unitOfWork.SaveAsync() > 0;
-            if (success)
-            {
-                return Unit.Value;
+                await unitOfWork.BlogPostCommentRepository.Create(blogPostComment);
+
+                var success = await unitOfWork.SaveAsync() > 0;
+
+                if (success)
+                {
+                    return Unit.Value;
+                }
+
+                throw new Exception();
             }
-            throw new Exception("Some problem");
+
+            throw new RestException("Пользователь не найден");
         }
     }
 }

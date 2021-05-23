@@ -25,6 +25,7 @@ namespace LikesHikes.Application.Logic.Blog.GetBlogPosts
             var allBlogPosts = await unitOfWork.BlogPostRepository.GetAll();
 
             var count = allBlogPosts.Count();
+
             var items = allBlogPosts.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize);
 
             var blogPosts = items.Select(p => new BlogPostShortModel(p));

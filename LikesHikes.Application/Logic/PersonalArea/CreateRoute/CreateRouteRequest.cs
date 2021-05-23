@@ -8,11 +8,11 @@ namespace LikesHikes.Application.Logic.Routs.CreateRout
 {
     public class CreateRouteRequest : IRequest
     {
-        public string Name { get; set; }
+        public string RouteName { get; set; }
 
         public int Duration { get; set; }
 
-        public Complexity Complexity { get; set; }
+        public string Complexity { get; set; }
 
         public string Region { get; set; }
 

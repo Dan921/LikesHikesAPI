@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using LikesHikes.Domain.Entities;
 using MediatR;
 using System;
@@ -20,6 +21,13 @@ namespace LikesHikes.Application.Logic.Routs.CreateRoutReview
 
         public async Task<Unit> Handle(CreateRouteReviewRequest request, CancellationToken cancellationToken)
         {
+            var route = await unitOfWork.RouteRepository.GetById(request.RouteId);
+
+            if(route == null)
+            {
+                throw new RestException("Маршрут не найден");
+            }
+
             var routeReview = new RouteReview()
             {
                 Text = request.Text,
@@ -29,18 +37,21 @@ namespace LikesHikes.Application.Logic.Routs.CreateRoutReview
                 RouteId = request.RouteId
             };
 
-            var route = await unitOfWork.RouteRepository.GetById(routeReview.RouteId);
-
             route.Rating = (route.Rating * route.CountOfVoces + routeReview.Rating) / (route.CountOfVoces + 1);
             route.CountOfVoces++;
 
             await unitOfWork.RouteReviewRepository.Create(routeReview);
+
+            await unitOfWork.RouteRepository.Update(route);
+
             var success = await unitOfWork.SaveAsync() > 0;
+
             if (success)
             {
                 return Unit.Value;
             }
-            throw new ApplicationException("Some problem");
+
+            throw new Exception();
         }
     }
 }

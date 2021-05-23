@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,7 @@ namespace LikesHikes.Application.Logic.PersonalArea.PublishRoute
                 await unitOfWork.RouteRepository.Update(route);
 
                 var success = await unitOfWork.SaveAsync() > 0;
+
                 if (success)
                 {
                     return Unit.Value;
@@ -40,9 +42,9 @@ namespace LikesHikes.Application.Logic.PersonalArea.PublishRoute
             }
             else
             {
-                throw new ApplicationException("The user does not have this route");
+                throw new RestException("У пользователя нет такого маршрута");
             }
-            throw new ApplicationException("Some problem");
+            throw new Exception();
         }
     }
 }

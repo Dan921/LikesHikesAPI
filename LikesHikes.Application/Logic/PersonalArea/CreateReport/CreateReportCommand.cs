@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using LikesHikes.Domain.Entities;
 using MediatR;
 using System;
@@ -22,14 +23,14 @@ namespace LikesHikes.Application.Logic.PersonalArea.CreateReport
         public async Task<Unit> Handle(CreateReportRequest request, CancellationToken cancellationToken)
         {
             var userRoute = (await unitOfWork.UserRouteRepository.GetAll())
-                .FirstOrDefault(p => p.AppUserId == request.AppUserId
-                && p.RouteId == request.RouteId);
+                .FirstOrDefault(p => p.AppUserId == request.AppUserId && 
+                p.RouteId == request.RouteId);
 
             if (userRoute != null)
             {
                 var report = new Report()
                 {
-                    Name = request.Name,
+                    Name = request.ReportName,
                     Text = request.Text
                 };
 
@@ -40,6 +41,7 @@ namespace LikesHikes.Application.Logic.PersonalArea.CreateReport
                 await unitOfWork.UserRouteRepository.Update(userRoute);
 
                 var success = await unitOfWork.SaveAsync() > 0;
+
                 if (success)
                 {
                     return Unit.Value;
@@ -47,10 +49,10 @@ namespace LikesHikes.Application.Logic.PersonalArea.CreateReport
             }
             else
             {
-                throw new ApplicationException("The user does not have this route");
+                throw new RestException("У пользователя нет такого маршрута");
             }
 
-            throw new ApplicationException("Some problem");
+            throw new Exception();
         }
     }
 }

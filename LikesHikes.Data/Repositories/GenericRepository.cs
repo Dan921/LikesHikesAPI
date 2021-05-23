@@ -21,7 +21,7 @@ namespace LikesHikes.Data
 
         public Task<IQueryable<TEntity>> GetAll()
         {
-            IQueryable<TEntity> data = dbSet.AsNoTracking();
+            IQueryable<TEntity> data = dbSet;
             return Task.FromResult(data);
         }
 

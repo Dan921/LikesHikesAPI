@@ -1,4 +1,5 @@
-﻿using LikesHikes.Application.Helpers;
+﻿using Application.Exceptions;
+using LikesHikes.Application.Helpers;
 using LikesHikes.Application.Models;
 using LikesHikes.Domain;
 using LikesHikes.Domain.Models;
@@ -25,35 +26,39 @@ namespace LikesHikes.Application.Logic.Routs.UpdateRout
 
         public async Task<RouteDetailModel> Handle(UpdateRouteRequest request, CancellationToken cancellationToken)
         {
-            if((await unitOfWork.UserRouteRepository.GetAll())
+            var userRoute = (await unitOfWork.UserRouteRepository.GetAll())
                 .FirstOrDefault(p => p.AppUserId == request.AppUserId
-                && p.RouteId == request.Id) != null)
+                && p.RouteId == request.Id);
+
+            if (userRoute != null)
             {
                 var route = await unitOfWork.RouteRepository.GetById(request.Id);
+
                 if (route == null)
                 {
-                    throw new ApplicationException("Could not find route");
+                    throw new RestException("Маршрут не найден");
                 }
-
-                route.Name = request.Name;
-                route.Length = distantHelper.CalculateDistant(request.Coordinates);
-                route.Duration = request.Duration;
-                route.Complexity = request.Complexity;
-                route.Region = request.Region;
-                route.Description = request.Description;
-                route.KeyPoints = request.KeyPoints;
-                route.Coordinates = JsonSerializer.Serialize<List<Coordinate>>(request.Coordinates);
 
                 if (route.CreatedById == request.AppUserId)
                 {
+                    route.Name = request.RouteName;
+                    route.Length = distantHelper.CalculateDistant(request.Coordinates);
+                    route.Duration = request.Duration;
+                    route.Complexity = request.Complexity;
+                    route.Region = request.Region;
+                    route.Description = request.Description;
+                    route.KeyPoints = request.KeyPoints;
+                    route.Coordinates = JsonSerializer.Serialize<List<Coordinate>>(request.Coordinates);
+
                     await unitOfWork.RouteRepository.Update(route);
                 }
                 else
                 {
-                    throw new ApplicationException("The user is not the creator of the route");
+                    throw new RestException("Вы не являетесь создателем этого маршрута");
                 }
 
                 var success = await unitOfWork.SaveAsync() > 0;
+
                 if (success)
                 {
                     return new RouteDetailModel(route);
@@ -61,9 +66,10 @@ namespace LikesHikes.Application.Logic.Routs.UpdateRout
             }
             else
             {
-                throw new ApplicationException("The user does not have this route");
+                throw new RestException("У пользователя нет такого маршрута");
             }
-            throw new ApplicationException("Some problem");
+
+            throw new Exception();
         }
     }
 }

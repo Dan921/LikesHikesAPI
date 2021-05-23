@@ -24,5 +24,7 @@ namespace LikesHikes.Domain.Entities
         public virtual Route Route { get; set; }
 
         public Guid AppUserId { get; set; }
+
+        public virtual AppUser AppUser { get; set; }
     }
 }

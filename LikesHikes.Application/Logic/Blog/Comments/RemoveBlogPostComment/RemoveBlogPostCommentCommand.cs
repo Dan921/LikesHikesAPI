@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -22,17 +23,18 @@ namespace LikesHikes.Application.Logic.Blog.RemoveBlogPostComment
             var comment = await unitOfWork.BlogPostCommentRepository.GetById(request.Id);
             if (comment == null)
             {
-                throw new ApplicationException("Could not find comment");
+                throw new RestException("Комментарий не найден");
             }
             await unitOfWork.BlogPostCommentRepository.Remove(request.Id);
 
             var success = await unitOfWork.SaveAsync() > 0;
+
             if (success)
             {
                 return Unit.Value;
             }
 
-            throw new Exception("Some problem");
+            throw new Exception();
         }
     }
 }

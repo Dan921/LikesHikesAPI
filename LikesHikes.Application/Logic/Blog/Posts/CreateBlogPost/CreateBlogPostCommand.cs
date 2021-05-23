@@ -29,12 +29,15 @@ namespace LikesHikes.Application.Logic.Blog.CreateBlogPost
             };
 
             await unitOfWork.BlogPostRepository.Create(blogPost);
+
             var success = await unitOfWork.SaveAsync() > 0;
+
             if (success)
             {
                 return Unit.Value;
             }
-            throw new Exception("Some problem");
+
+            throw new Exception();
         }
     }
 }

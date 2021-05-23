@@ -10,11 +10,9 @@ namespace LikesHikes.Application.Logic.PersonalArea.UpdateReport
     {
         public Guid RouteId { get; set; }
 
-        public Guid AppUserId { get; set; }
+        public Guid? AppUserId { get; set; }
 
-        public Guid ReportId { get; set; }
-
-        public string Name { get; set; }
+        public string ReportName { get; set; }
 
         public string Text { get; set; }
     }

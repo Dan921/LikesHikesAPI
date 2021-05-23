@@ -13,7 +13,7 @@ namespace LikesHikes.Application.Models
             Id = post.Id;
             Heading = post.Heading;
             Text = post.Text;
-            PublishingDate = post.PublishingDate.ToString();
+            PublishingDate = post.PublishingDate.ToString("dd/MM/yyyy");
             Comments = post.BlogPostComments.Select(p => new BlogPostCommentModel(p));
         }
 

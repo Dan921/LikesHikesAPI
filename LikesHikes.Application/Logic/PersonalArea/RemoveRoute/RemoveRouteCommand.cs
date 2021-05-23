@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -27,9 +28,10 @@ namespace LikesHikes.Application.Logic.PersonalArea.RemoveRoute
             if (userRoute != null)
             {
                 var route = await unitOfWork.RouteRepository.GetById(request.RouteId);
+
                 if (route == null)
                 {
-                    throw new ApplicationException("Could not find route");
+                    throw new RestException("Маршрут не найден");
                 }
 
                 if(userRoute.ReportId != null)
@@ -39,18 +41,18 @@ namespace LikesHikes.Application.Logic.PersonalArea.RemoveRoute
 
                 await unitOfWork.UserRouteRepository.Remove(userRoute.Id);
 
-
                 // Checking for the use of the route by other users and deleting if there are none
 
                 var allUsersRoute = (await unitOfWork.UserRouteRepository.GetAll())
                     .Where(p => p.RouteId == request.RouteId);
 
-                if (allUsersRoute == null)
+                if (!allUsersRoute.Any())
                 {
                     await unitOfWork.RouteRepository.Remove(request.RouteId);
                 }
 
                 var success = await unitOfWork.SaveAsync() > 0;
+
                 if (success)
                 {
                     return Unit.Value;
@@ -58,9 +60,10 @@ namespace LikesHikes.Application.Logic.PersonalArea.RemoveRoute
             }
             else
             {
-                throw new ApplicationException("The user does not have this route");
+                throw new RestException("У пользователя нет такого маршрута");
             }
-            throw new ApplicationException("Some problem");
+
+            throw new Exception();
         }
     }
 }

@@ -2,29 +2,31 @@
 using LikesHikes.Domain.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
 
 namespace LikesHikes.Application.Models
 {
-    public class RouteDetailModel
+    public class RoutePrivateModel
     {
-        public RouteDetailModel(Route route)
+        public RoutePrivateModel(Route route)
         {
             Id = route.Id;
             Name = route.Name;
             Length = route.Length;
             Duration = route.Duration;
+
+            if (route.Description.Length > 100)
+                Description = route.Description.Substring(0, 100) + "...";
+            else
+                Description = route.Description;
+
             Complexity = route.Complexity.ToString();
             Region = route.Region;
-            IsPublished = route.IsPublished;
-            Description = route.Description;
             KeyPoints = route.KeyPoints;
             Coordinates = JsonSerializer.Deserialize<List<Coordinate>>(route.Coordinates);
             Rating = route.Rating;
-            AuthorName = route.CreatedBy.UserName;
-            RouteReviewModels = route.RouteReviews.Select(p => new RouteReviewModel(p));
+            IsPublished = route.IsPublished;
         }
 
         public Guid Id { get; set; }
@@ -35,13 +37,11 @@ namespace LikesHikes.Application.Models
 
         public int Duration { get; set; }
 
+        public string Description { get; set; }
+
         public string Complexity { get; set; }
 
         public string Region { get; set; }
-
-        public bool IsPublished { get; set; }
-
-        public string Description { get; set; }
 
         public string KeyPoints { get; set; }
 
@@ -49,8 +49,8 @@ namespace LikesHikes.Application.Models
 
         public float Rating { get; set; }
 
-        public string AuthorName { get; set; }
+        public bool ReportExists { get; set; }
 
-        public IEnumerable<RouteReviewModel> RouteReviewModels { get; set; }
+        public bool IsPublished { get; set; }
     }
 }

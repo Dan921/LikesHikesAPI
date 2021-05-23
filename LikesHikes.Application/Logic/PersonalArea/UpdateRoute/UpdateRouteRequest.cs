@@ -11,7 +11,7 @@ namespace LikesHikes.Application.Logic.Routs.UpdateRout
     {
         public Guid Id { get; set; }
 
-        public string Name { get; set; }
+        public string RouteName { get; set; }
 
         public int Duration { get; set; }
 

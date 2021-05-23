@@ -10,7 +10,5 @@ namespace LikesHikes.Application.Logic.PersonalArea.RemoveReport
         public Guid RouteId { get; set; }
 
         public Guid? AppUserId { get; set; }
-
-        public Guid ReportId { get; set; }
     }
 }

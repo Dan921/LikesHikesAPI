@@ -27,16 +27,28 @@ namespace LikesHikes.Application.Logic.Routs.CreateRout
         {
             var route = new Route()
             {
-                Name = request.Name,
+                Name = request.RouteName,
                 Length = distantHelper.CalculateDistant(request.Coordinates),
                 Duration = request.Duration,
-                Complexity = request.Complexity,
                 Region = request.Region,
                 Description = request.Description,
                 KeyPoints = request.KeyPoints,
                 Coordinates = JsonSerializer.Serialize<List<Coordinate>>(request.Coordinates),
                 CreatedById = (Guid)request.CreatedById
             };
+
+            switch (request.Complexity)
+            {
+                case "Легкий":
+                    route.Complexity = Complexity.Easy;
+                    break;
+                case "Средний":
+                    route.Complexity = Complexity.Medium;
+                    break;
+                case "Сложный":
+                    route.Complexity = Complexity.Difficult;
+                    break;
+            }
 
             await unitOfWork.RouteRepository.Create(route);
 
@@ -47,12 +59,15 @@ namespace LikesHikes.Application.Logic.Routs.CreateRout
             };
 
             await unitOfWork.UserRouteRepository.Create(userRoute);
+
             var success = await unitOfWork.SaveAsync() > 0;
+
             if (success)
             {
                 return Unit.Value;
             }
-            throw new Exception("Some problem");
+
+            throw new Exception();
         }
     }
 }

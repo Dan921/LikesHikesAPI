@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LikesHikes.Application.Logic.Routs.GetRoutes
+namespace LikesHikes.Application.Logic.PersonalArea.GetUserRoutes
 {
-    public class GetAllRoutesRequest : IRequest<IEnumerable<RoutePublicModel>>
+    public class GetUserRoutesRequest : IRequest<IEnumerable<RoutePrivateModel>>
     {
         public Guid? AppUserId { get; set; }
 

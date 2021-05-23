@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -20,19 +21,22 @@ namespace LikesHikes.Application.Logic.Blog.RemoveBlogPost
         public async Task<Unit> Handle(RemoveBlogPostRequest request, CancellationToken cancellationToken)
         {
             var post = await unitOfWork.BlogPostRepository.GetById(request.Id);
+
             if (post == null)
             {
-                throw new ApplicationException("Could not find post");
+                throw new RestException("Пост не найден");
             }
+
             await unitOfWork.BlogPostRepository.Remove(request.Id);
 
             var success = await unitOfWork.SaveAsync() > 0;
+
             if (success)
             {
                 return Unit.Value;
             }
 
-            throw new Exception("Some problem");
+            throw new Exception();
         }
     }
 }

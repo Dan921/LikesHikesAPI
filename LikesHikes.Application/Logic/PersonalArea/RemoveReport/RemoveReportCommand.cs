@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -26,16 +27,15 @@ namespace LikesHikes.Application.Logic.PersonalArea.RemoveReport
 
             if (userRoute != null)
             {
-                if (userRoute.ReportId != request.ReportId)
+                if (userRoute.Report != null)
                 {
-                    throw new ApplicationException("The route does not have such a report");
+                    await unitOfWork.ReportRepository.Remove((Guid)userRoute.ReportId);
                 }
-
-                await unitOfWork.ReportRepository.Remove(request.ReportId);
 
                 userRoute.Report = null;
 
                 var success = await unitOfWork.SaveAsync() > 0;
+
                 if (success)
                 {
                     return Unit.Value;
@@ -43,9 +43,10 @@ namespace LikesHikes.Application.Logic.PersonalArea.RemoveReport
             }
             else
             {
-                throw new ApplicationException("The user does not have this route");
+                throw new RestException("У пользователя нет такого маршрута");
             }
-            throw new ApplicationException("Some problem");
+
+            throw new Exception();
         }
     }
 }

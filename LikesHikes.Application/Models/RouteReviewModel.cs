@@ -7,14 +7,15 @@ namespace LikesHikes.Application.Models
 {
     public class RouteReviewModel
     {
-        public RouteReviewModel(RouteReview route)
+        public RouteReviewModel(RouteReview review)
         {
-            Id = route.Id;
-            Text = route.Text;
-            Rating = route.Rating;
-            Time = route.Time.ToString();
-            AppUserId = route.AppUserId;
-            RouteId = route.RouteId;
+            Id = review.Id;
+            Text = review.Text;
+            Rating = review.Rating;
+            Time = review.Time.Date.ToString("dd/MM/yyyy");
+            AppUserId = review.AppUserId;
+            //AuthorName = review.
+            RouteId = review.RouteId;
         }
 
         public Guid Id { get; set; }
@@ -24,6 +25,8 @@ namespace LikesHikes.Application.Models
         public int Rating { get; set; }
 
         public string Time { get; set; }
+
+        public string AuthorName { get; set; }
 
         public Guid AppUserId { get; set; }
 

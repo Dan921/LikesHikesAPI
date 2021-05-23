@@ -1,9 +1,9 @@
 ﻿using LikesHikes.Application.Models;
 using MediatR;
 
-namespace LikesHikes.Application.Logic.User.Registration
+namespace LikesHikes.Application.Logic.Account.Registration
 {
-	public class RegistrationRequest : IRequest<UserAuthModel>
+	public class RegistrationRequest : IRequest
 	{
 		public string UserName { get; set; }
 

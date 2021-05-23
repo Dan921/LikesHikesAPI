@@ -1,4 +1,5 @@
-﻿using Data.DAL;
+﻿using Application.Exceptions;
+using Data.DAL;
 using LikesHikes.Application.Models;
 using LikesHikes.Domain;
 using MediatR;
@@ -24,10 +25,12 @@ namespace LikesHikes.Application.Logic.Blog.GetBlogPostById
         public async Task<BlogPostDetailModel> Handle(GetBlogPostByIdRequest request, CancellationToken cancellationToken)
         {
             var blogPost = await unitOfWork.BlogPostRepository.GetById(request.Id);
+
             if (blogPost == null)
             {
-                throw new ApplicationException("Could not find post");
+                throw new RestException("Пост не найден");
             }
+
             return new BlogPostDetailModel(blogPost);
         }
     }

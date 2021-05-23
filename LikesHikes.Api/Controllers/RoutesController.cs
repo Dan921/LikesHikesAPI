@@ -1,4 +1,6 @@
-﻿using LikesHikes.Application.Logic.Routs.CreateRoutReview;
+﻿using Application.Exceptions;
+using LikesHikes.Api.Attributes;
+using LikesHikes.Application.Logic.Routs.CreateRoutReview;
 using LikesHikes.Application.Logic.Routs.GetRouteById;
 using LikesHikes.Application.Logic.Routs.GetRoutes;
 using LikesHikes.Application.Logic.Routs.RemoveRout;
@@ -9,12 +11,14 @@ using LikesHikes.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace LikesHikes.Api.Controllers
@@ -34,44 +38,45 @@ namespace LikesHikes.Api.Controllers
         }
 
         [HttpPost("CreateReview")]
-        public async Task<Unit> CreateReview([FromBody] CreateRouteReviewRequest request)
+        public async Task<IActionResult> CreateReview([FromBody] CreateRouteReviewRequest request)
         {
-            try
-            {
-                var user = await userManager.GetUserAsync(User);
-                request.AppUserId = user.Id;
-                return await mediator.Send(request);
-            }
-            catch
-            {
-                throw new ApplicationException("User is not found");
-            }
+            request.AppUserId = (await userManager.GetUserAsync(User))?.Id;
+            return Ok(await mediator.Send(request));
         }
 
         [AllowAnonymous]
         [HttpGet("GetAllRoutes")]
-        public async Task<IEnumerable<RouteShortModel>> GetAllRoutes([FromQuery]RouteFilterModel filter)
+        public async Task<IActionResult> GetAllRoutes([FromQuery] RouteFilterModel filter)
         {
-            return await mediator.Send(new GetAllRoutesRequest { RouteFilter = filter });
+            return Ok(await mediator.Send(new GetAllRoutesRequest 
+            {
+                AppUserId = (await userManager.GetUserAsync(User))?.Id,
+                RouteFilter = filter 
+            }));
         }
 
         [AllowAnonymous]
-        [HttpGet("GetRoute/{id}")]
-        public async Task<RouteDetailModel> GetRouteById([FromRoute] Guid id)
+        [HttpGet("GetRouteById")]
+        public async Task<IActionResult> GetRouteById([FromQuery] Guid id)
         {
-            return await mediator.Send(new GetRouteByIdRequest {Id = id });
+            return Ok(await mediator.Send(new GetRouteByIdRequest 
+            { 
+                AppUserId = (await userManager.GetUserAsync(User))?.Id, 
+                RouteId = id 
+            }));
         }
 
+        [AuthorizeRoles(UserRole.Admin)]
         [HttpDelete("RemoveRoute")]
-        public async Task<Unit> RemoveRoute([FromBody] RemoveRoutRequest request)
+        public async Task<IActionResult> RemoveRoute([FromQuery] Guid routeId)
         {
-            return await mediator.Send(request);
+            return Ok(await mediator.Send(new RemoveRoutRequest { Id = routeId }));
         }
 
         [HttpDelete("RemoveRouteReview")]
-        public async Task<Unit> RemoveRouteReview([FromBody] RemoveRouteReviewRequest request)
+        public async Task<IActionResult> RemoveRouteReview([FromQuery] Guid routeReviewId)
         {
-            return await mediator.Send(request);
+            return Ok(await mediator.Send(new RemoveRouteReviewRequest { Id = routeReviewId }));
         }
     }
 }

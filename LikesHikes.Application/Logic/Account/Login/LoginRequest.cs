@@ -1,9 +1,9 @@
 ﻿using LikesHikes.Application.Models;
 using MediatR;
 
-namespace LikesHikes.Application.Logic.User.Login
+namespace LikesHikes.Application.Logic.Account.Login
 {
-    public class LoginRequest : IRequest<UserAuthModel>
+    public class LoginRequest : IRequest<LoginResult>
 	{
 		public string Email { get; set; }
 

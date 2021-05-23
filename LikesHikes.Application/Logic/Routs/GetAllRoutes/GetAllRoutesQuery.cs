@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace LikesHikes.Application.Logic.Routs.GetRoutes
 {
-    public class GetAllRoutesQuery : IRequestHandler<GetAllRoutesRequest, IEnumerable<RouteShortModel>>
+    public class GetAllRoutesQuery : IRequestHandler<GetAllRoutesRequest, IEnumerable<RoutePublicModel>>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -19,11 +19,24 @@ namespace LikesHikes.Application.Logic.Routs.GetRoutes
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<RouteShortModel>> Handle(GetAllRoutesRequest request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<RoutePublicModel>> Handle(GetAllRoutesRequest request, CancellationToken cancellationToken)
         {
             var allRoutesModels = (await unitOfWork.RouteRepository.GetRoutesUsingFilter(request.RouteFilter))
                 .Where(p => p.IsPublished)
-                .Select(p => new RouteShortModel(p));
+                .Select(p => new RoutePublicModel(p));
+
+            if (request.AppUserId != null)
+            {
+                var userRouteIds = (await unitOfWork.UserRouteRepository.GetAll())
+                    .Where(p => p.AppUserId == request.AppUserId)
+                    .Select(p => p.RouteId);
+
+                foreach (var route in allRoutesModels)
+                {
+                    if (userRouteIds.Contains(route.Id))
+                        route.UserHas = true;
+                }
+            }
 
             return allRoutesModels;
         }

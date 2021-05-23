@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,8 @@ namespace LikesHikes.Application.Logic.PersonalArea.MarkRoutePassed
         public async Task<Unit> Handle(ChangeRoutePassedRequest request, CancellationToken cancellationToken)
         {
             var userRoute = (await unitOfWork.UserRouteRepository.GetAll())
-                .FirstOrDefault(p => p.AppUserId == request.AppUserId
-                && p.RouteId == request.RouteId);
+                .FirstOrDefault(p => p.AppUserId == request.AppUserId && 
+                p.RouteId == request.RouteId);
 
             if (userRoute != null)
             {
@@ -31,6 +32,7 @@ namespace LikesHikes.Application.Logic.PersonalArea.MarkRoutePassed
                 await unitOfWork.UserRouteRepository.Update(userRoute);
 
                 var success = await unitOfWork.SaveAsync() > 0;
+
                 if (success)
                 {
                     return Unit.Value;
@@ -38,10 +40,10 @@ namespace LikesHikes.Application.Logic.PersonalArea.MarkRoutePassed
             }
             else
             {
-                throw new ApplicationException("The user does not have this route");
+                throw new RestException("У пользователя нет такого маршрута");
             }
 
-            throw new ApplicationException("Some problem");
+            throw new Exception();
         }
     }
 }

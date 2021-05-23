@@ -5,14 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LikesHikes.Application.Logic.PersonalArea.GetUserData
+namespace LikesHikes.Application.Logic.Account.GetUserData
 {
     public class GetUserDataRequest : IRequest<GetUserDataResult>
     {
         public Guid? AppUserId { get; set; }
-
-        public bool OnlyPassedRoutes { get; set; }
-
-        //public RouteFilterModel RouteFilter { get; set; }
     }
 }

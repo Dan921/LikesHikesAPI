@@ -11,7 +11,7 @@ namespace LikesHikes.Application.Logic.PersonalArea.CreateReport
 
         public Guid RouteId { get; set; }
 
-        public string Name { get; set; }
+        public string ReportName { get; set; }
 
         public string Text { get; set; }
     }

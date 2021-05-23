@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LikesHikes.Application.Logic.User.Registration
+namespace LikesHikes.Application.Logic.Account.Registration
 {
 	public class RegistrationValidation : AbstractValidator<RegistrationRequest>
 	{

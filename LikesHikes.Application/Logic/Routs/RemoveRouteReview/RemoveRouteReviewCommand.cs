@@ -1,4 +1,5 @@
-﻿using LikesHikes.Domain;
+﻿using Application.Exceptions;
+using LikesHikes.Domain;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -20,19 +21,22 @@ namespace LikesHikes.Application.Logic.Routs.RemoveRouteReview
         public async Task<Unit> Handle(RemoveRouteReviewRequest request, CancellationToken cancellationToken)
         {
             var review = await unitOfWork.RouteReviewRepository.GetById(request.Id);
+
             if (review == null)
             {
-                throw new ApplicationException("Could not find review");
+                throw new RestException("Отзыв не найден");
             }
+
             await unitOfWork.RouteReviewRepository.Remove(request.Id);
 
             var success = await unitOfWork.SaveAsync() > 0;
+
             if (success)
             {
                 return Unit.Value;
             }
 
-            throw new ApplicationException("Some problem");
+            throw new Exception();
         }
     }
 }

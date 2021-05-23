@@ -1,4 +1,5 @@
-﻿using LikesHikes.Application.Models;
+﻿using Application.Exceptions;
+using LikesHikes.Application.Models;
 using LikesHikes.Domain;
 using MediatR;
 using System;
@@ -21,12 +22,13 @@ namespace LikesHikes.Application.Logic.PersonalArea.GetReport
 
         public async Task<ReportModel> Handle(GetReportRequest request, CancellationToken cancellationToken)
         {
-            var report = (await unitOfWork.UserRouteRepository.GetAll()).FirstOrDefault(p => p.AppUserId == request.AppUserId
-            && p.RouteId == request.RouteId).Report;
+            var report = (await unitOfWork.UserRouteRepository.GetAll())
+                .FirstOrDefault(p => p.AppUserId == request.AppUserId && 
+                p.RouteId == request.RouteId).Report;
             
             if(report == null)
             {
-                throw new ApplicationException("Could not find report");
+                throw new RestException("Отчет не найден");
             }
 
             var reportModel = new ReportModel(report);

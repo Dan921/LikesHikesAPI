@@ -12,7 +12,7 @@ namespace LikesHikes.Application.Models
             Id = comment.Id;
             UserName = comment.AppUser.UserName;
             Text = comment.Text;
-            Time = comment.Time.ToString();
+            Time = comment.Time.ToString("dd/MM/yyyy");
         }
 
         public Guid Id { get; set; }

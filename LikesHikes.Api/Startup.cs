@@ -1,7 +1,8 @@
 using API.Middleware;
 using Data.DAL;
 using Infrastructure.Security;
-using LikesHikes.Application.Logic.User.Login;
+using LikesHikes.Api.Middleware;
+using LikesHikes.Application.Logic.Account.Login;
 using LikesHikes.Data;
 using LikesHikes.Domain;
 using LikesHikes.Domain.Entities;
@@ -42,18 +43,18 @@ namespace LikesHikes.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
-
-            services.AddControllers();
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LikesHikes.Api", Version = "v1" });
             });
 
+            services.AddDbContext<DataContext>(item => item.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddMediatR(typeof(LoginQuery).Assembly);
 
-            services.AddDbContext<DataContext>(item => item.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddCors();
+
+            services.AddControllers();
 
             services.AddMvc(option =>
             {
@@ -66,7 +67,6 @@ namespace LikesHikes.Api
 
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IBlogPostCommentRepository, BlogPostCommentRepository>();
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("super secret key"));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -79,6 +79,7 @@ namespace LikesHikes.Api
                             IssuerSigningKey = key,
                             ValidateAudience = false,
                             ValidateIssuer = false,
+                            ValidateLifetime = true,
                         };
                     });
 
@@ -96,17 +97,19 @@ namespace LikesHikes.Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LikesHikes.Api v1"));
             }
 
-            app.UseMiddleware<ErrorHandlingMiddleware>();
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            //app.UseCors(builder => builder.AllowAnyOrigin());
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
-            app.UseAuthentication();
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseMiddleware<UserVerificationMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

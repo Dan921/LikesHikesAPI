@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LikesHikes.Application.Logic.PersonalArea.GetUserData
+namespace LikesHikes.Application.Logic.Account.GetUserData
 {
     public class GetUserDataResult
     {
@@ -11,10 +11,10 @@ namespace LikesHikes.Application.Logic.PersonalArea.GetUserData
 
         public string UserName { get; set; }
 
+        public bool IsAdmin { get; set; }
+
         public int RoutesCount { get; set; }
 
         public int PassedRoutesCount { get; set; }
-
-        public IEnumerable<RouteShortModel> UserRoutes { get; set; }
     }
 }

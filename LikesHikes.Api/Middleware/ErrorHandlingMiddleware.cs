@@ -46,8 +46,9 @@ namespace API.Middleware
                 // ReSharper disable once PatternAlwaysOfType
                 case Exception e:
                     logger.LogError(ex, "Server error");
-                    errors = string.IsNullOrWhiteSpace(e.Message) ? "error" : e.Message;
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    //errors = string.IsNullOrWhiteSpace(e.Message) ? "Server error" : e.Message;
+                    errors = "Ошибка сервера";
+                    context.Response.StatusCode = (int)HttpStatusCode.OK;
                     break;
             }
 
@@ -55,10 +56,7 @@ namespace API.Middleware
 
             if (errors != null)
             {
-                var result = JsonConvert.SerializeObject(new
-                                                             {
-                                                                 errors
-                                                             });
+                var result = JsonConvert.SerializeObject(new { errors });
 
                 await context.Response.WriteAsync(result);
             }

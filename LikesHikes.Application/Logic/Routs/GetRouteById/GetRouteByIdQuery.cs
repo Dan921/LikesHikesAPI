@@ -1,4 +1,5 @@
-﻿using LikesHikes.Application.Models;
+﻿using Application.Exceptions;
+using LikesHikes.Application.Models;
 using LikesHikes.Domain;
 using MediatR;
 using System;
@@ -21,14 +22,28 @@ namespace LikesHikes.Application.Logic.Routs.GetRouteById
 
         public async Task<RouteDetailModel> Handle(GetRouteByIdRequest request, CancellationToken cancellationToken)
         {
-            var route1 = (await unitOfWork.RouteRepository.GetRoutesUsingFilter(null)).FirstOrDefault(p => p.Id == request.Id);
-            var route = await unitOfWork.RouteRepository.GetById(request.Id);
-
-            if (route == null || !route.IsPublished)
+            if(request.AppUserId != null)
             {
-                throw new ApplicationException("Could not find post");
+                var userRoute = (await unitOfWork.UserRouteRepository.GetAll())
+                    .FirstOrDefault(p => p.AppUserId == request.AppUserId &&
+                    p.RouteId == request.RouteId);
+
+                if (userRoute != null)
+                {
+                    return new RouteDetailModel(userRoute.Route);
+                }
             }
-            return new RouteDetailModel(route);
+            else
+            {
+                var route = await unitOfWork.RouteRepository.GetById(request.RouteId);
+
+                if (route != null && route.IsPublished)
+                {
+                    return new RouteDetailModel(route);
+                }
+            }
+
+            throw new RestException("Маршрут не найден или недоступен");
         }
     }
 }

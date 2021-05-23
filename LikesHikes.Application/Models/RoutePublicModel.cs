@@ -7,14 +7,20 @@ using System.Text.Json;
 
 namespace LikesHikes.Application.Models
 {
-    public class RouteShortModel
+    public class RoutePublicModel
     {
-        public RouteShortModel(Route route)
+        public RoutePublicModel(Route route)
         {
             Id = route.Id;
             Name = route.Name;
             Length = route.Length;
             Duration = route.Duration;
+
+            if(route.Description.Length > 100)
+                Description = route.Description.Substring(0, 100) + "...";
+            else
+                Description = route.Description;
+
             Complexity = route.Complexity.ToString();
             Region = route.Region;
             KeyPoints = route.KeyPoints;
@@ -30,6 +36,8 @@ namespace LikesHikes.Application.Models
 
         public int Duration { get; set; }
 
+        public string Description { get; set; }
+
         public string Complexity { get; set; }
 
         public string Region { get; set; }
@@ -39,5 +47,7 @@ namespace LikesHikes.Application.Models
         public List<Coordinate> Coordinates { get; set; }
 
         public float Rating { get; set; }
+
+        public bool UserHas { get; set; }
     }
 }
