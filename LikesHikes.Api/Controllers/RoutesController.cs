@@ -1,5 +1,6 @@
 ﻿using Application.Exceptions;
 using LikesHikes.Api.Attributes;
+using LikesHikes.Application.Logic.Routs.AddRouteToUser;
 using LikesHikes.Application.Logic.Routs.CreateRoutReview;
 using LikesHikes.Application.Logic.Routs.GetRouteById;
 using LikesHikes.Application.Logic.Routs.GetRoutes;
@@ -77,6 +78,13 @@ namespace LikesHikes.Api.Controllers
         public async Task<IActionResult> RemoveRouteReview([FromQuery] Guid routeReviewId)
         {
             return Ok(await mediator.Send(new RemoveRouteReviewRequest { Id = routeReviewId }));
+        }
+
+        [HttpPost("AddRouteToUser")]
+        public async Task<IActionResult> AddRouteToUser([FromBody] AddRouteToUserRequest request)
+        {
+            request.AppUserId = (await userManager.GetUserAsync(User))?.Id;
+            return Ok(await mediator.Send(request));
         }
     }
 }
