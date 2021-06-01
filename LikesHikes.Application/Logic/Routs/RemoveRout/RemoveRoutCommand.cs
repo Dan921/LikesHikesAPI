@@ -27,7 +27,10 @@ namespace LikesHikes.Application.Logic.Routs.RemoveRout
                 throw new RestException("Маршрут не найден");
             }
 
-            await unitOfWork.RouteRepository.Remove(request.Id);
+            route.IsBanned = true;
+            route.IsPublished = false;
+
+            await unitOfWork.RouteRepository.Update(route);
 
             var success = await unitOfWork.SaveAsync() > 0;
 

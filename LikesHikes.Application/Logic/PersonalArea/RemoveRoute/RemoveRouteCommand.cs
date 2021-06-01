@@ -41,21 +41,30 @@ namespace LikesHikes.Application.Logic.PersonalArea.RemoveRoute
 
                 await unitOfWork.UserRouteRepository.Remove(userRoute.Id);
 
-                // Checking for the use of the route by other users and deleting if there are none
-
-                var allUsersRoute = (await unitOfWork.UserRouteRepository.GetAll())
-                    .Where(p => p.RouteId == request.RouteId);
-
-                if (!allUsersRoute.Any())
-                {
-                    await unitOfWork.RouteRepository.Remove(request.RouteId);
-                }
-
                 var success = await unitOfWork.SaveAsync() > 0;
 
                 if (success)
                 {
-                    return Unit.Value;
+                    // Checking for the use of the route by other users and deleting if there are none
+
+                    var allUsersRoute = (await unitOfWork.UserRouteRepository.GetAll())
+                        .Where(p => p.RouteId == request.RouteId);
+
+                    if (!allUsersRoute.Any())
+                    {
+                        var routeReviews = (await unitOfWork.RouteReviewRepository.GetAll()).Where(p => p.AppUserId == request.RouteId);
+
+                        await unitOfWork.RouteReviewRepository.DeleteRange(routeReviews);
+
+                        await unitOfWork.RouteRepository.Remove(request.RouteId);
+
+                        success = await unitOfWork.SaveAsync() > 0;
+
+                        if (success)
+                        {
+                            return Unit.Value;
+                        }
+                    }
                 }
             }
             else

@@ -24,14 +24,17 @@ namespace LikesHikes.Application.Logic.PersonalArea.GetUserRoutes
             var userRoutes = (await unitOfWork.UserRouteRepository.GetAll())
                     .Where(p => p.AppUserId == request.AppUserId);
 
-            var routesModels = (await unitOfWork.RouteRepository.GetRoutesUsingFilter(request.RouteFilter))
-                .Where(p => userRoutes.Select(p => p.Id).Contains(p.Id))
-                .Select(p => new RoutePrivateModel(p));
+            var routesModels = userRoutes
+                .Select(p => p.Route)
+                .Select(p => new RoutePrivateModel(p))
+                .ToList();
 
             foreach (var route in routesModels)
             {
                 if (userRoutes.FirstOrDefault(p => p.RouteId == route.Id).ReportId != null)
                     route.ReportExists = true;
+                if (userRoutes.FirstOrDefault(p => p.RouteId == route.Id).IsPassed == true)
+                    route.IsPassed = true;
             }
 
             return routesModels;

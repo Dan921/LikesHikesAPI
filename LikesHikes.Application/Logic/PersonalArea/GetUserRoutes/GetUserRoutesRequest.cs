@@ -10,7 +10,5 @@ namespace LikesHikes.Application.Logic.PersonalArea.GetUserRoutes
     public class GetUserRoutesRequest : IRequest<IEnumerable<RoutePrivateModel>>
     {
         public Guid? AppUserId { get; set; }
-
-        public RouteFilterModel RouteFilter { get; set; }
     }
 }

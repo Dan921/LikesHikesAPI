@@ -1,6 +1,8 @@
 ﻿using Application.Exceptions;
 using LikesHikes.Domain;
+using LikesHikes.Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,16 +29,39 @@ namespace LikesHikes.Application.Logic.Routs.RemoveRouteReview
                 throw new RestException("Отзыв не найден");
             }
 
-            await unitOfWork.RouteReviewRepository.Remove(request.Id);
-
-            var success = await unitOfWork.SaveAsync() > 0;
-
-            if (success)
+            if(request.AppUserId == review.AppUserId || request.IsAdmin)
             {
-                return Unit.Value;
+                await unitOfWork.RouteReviewRepository.Remove(request.Id);
+
+                var success = await unitOfWork.SaveAsync() > 0;
+
+                if (success)
+                {
+                    var route = await unitOfWork.RouteRepository.GetById(review.RouteId);
+
+                    if (route.CountOfVoces == 1)
+                        route.Rating = null;
+                    else
+                        route.Rating = (route.Rating * route.CountOfVoces - review.Rating) / (route.CountOfVoces - 1);
+
+                    route.CountOfVoces--;
+
+                    await unitOfWork.RouteRepository.Update(route);
+
+                    success = await unitOfWork.SaveAsync() > 0;
+
+                    if (success)
+                    {
+                        return Unit.Value;
+                    }
+
+                    throw new RestException("Ошибка при обновлении маршрута. Отзыв удален");
+                }
+
+                throw new RestException("Ошибка при удалении отзыва");
             }
 
-            throw new Exception();
+            throw new RestException("У вас нет прав на удаление");
         }
     }
 }

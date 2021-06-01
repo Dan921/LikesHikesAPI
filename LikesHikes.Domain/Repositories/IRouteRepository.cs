@@ -11,5 +11,6 @@ namespace LikesHikes.Domain.Repositories
     public interface IRouteRepository : IGenericRepository<Route>
     {
         Task<IQueryable<Route>> GetRoutesUsingFilter(RouteFilterModel routeFilterModel);
+        Task<IQueryable<Route>> GetUserRoutesUsingFilter(UserRouteFilterModel userRouteFilterModel);
     }
 }

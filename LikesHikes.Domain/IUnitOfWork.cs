@@ -15,6 +15,7 @@ namespace LikesHikes.Domain
         IGenericRepository<RouteReview> RouteReviewRepository { get; }
         IGenericRepository<UserRoute> UserRouteRepository { get; }
         IGenericRepository<BlogPostComment> BlogPostCommentRepository { get; }
+        IGenericRepository<AppImage> ImageRepository { get; }
 
         Task<int> SaveAsync();
     }

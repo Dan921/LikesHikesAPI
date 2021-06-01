@@ -22,21 +22,33 @@ namespace LikesHikes.Application.Logic.Routs.GetRouteById
 
         public async Task<RouteDetailModel> Handle(GetRouteByIdRequest request, CancellationToken cancellationToken)
         {
-            if(request.AppUserId != null)
+            var route = await unitOfWork.RouteRepository.GetById(request.RouteId);
+
+            if (request.AppUserId != null)
             {
-                var userRoute = (await unitOfWork.UserRouteRepository.GetAll())
+                var userRouteId = (await unitOfWork.UserRouteRepository.GetAll())
+                    .FirstOrDefault(p => p.AppUserId == request.AppUserId &&
+                    p.RouteId == request.RouteId)?.RouteId;
+
+                if (route != null && (userRouteId != null || route.IsPublished))
+                {
+                    var userReview = (await unitOfWork.RouteReviewRepository.GetAll())
                     .FirstOrDefault(p => p.AppUserId == request.AppUserId &&
                     p.RouteId == request.RouteId);
 
-                if (userRoute != null)
-                {
-                    return new RouteDetailModel(userRoute.Route);
+                    var routeModel = new RouteDetailModel(route);
+
+                    if(userReview != null)
+                    {
+                        routeModel.UserReview = new RouteReviewModel(userReview);
+                        routeModel.RouteReviews = routeModel.RouteReviews.Where(p => p.Id != userReview.Id);
+                    }
+
+                    return routeModel;
                 }
             }
             else
             {
-                var route = await unitOfWork.RouteRepository.GetById(request.RouteId);
-
                 if (route != null && route.IsPublished)
                 {
                     return new RouteDetailModel(route);

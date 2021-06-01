@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LikesHikes.Application.Logic.PersonalArea.CreateReport
+namespace LikesHikes.Application.Logic.PersonalArea.CreateOrEditReport
 {
-    public class CreateReportRequest : IRequest
+    public class CreateOrEditReportRequest : IRequest
     {
         public Guid? AppUserId { get; set; }
 

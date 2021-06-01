@@ -31,9 +31,11 @@ namespace LikesHikes.Domain.Entities
          
         public bool IsPublished { get; set; }
 
-        public float Rating { get; set; }
+        public float? Rating { get; set; }
 
         public int CountOfVoces { get; set; }
+
+        public bool IsBanned { get; set; }
 
 
         public Guid CreatedById { get; set; }

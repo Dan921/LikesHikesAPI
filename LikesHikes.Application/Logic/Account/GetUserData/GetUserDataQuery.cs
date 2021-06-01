@@ -33,14 +33,6 @@ namespace LikesHikes.Application.Logic.Account.GetUserData
 
             var passedRoutesCount = userRoutes.Where(p => p.IsPassed).Count();
 
-            //if (request.OnlyPassedRoutes)
-            //{
-            //    userRoutes = userRoutes.Where(p => p.IsPassed);
-            //}
-
-            //var userRoutesModels = userRoutes.Select(p => p.Route)
-            //    .Select(p => new RoutePublicModel(p));
-
             var user = await userManager.FindByIdAsync(request.AppUserId.ToString());
 
             var userDataResult = new GetUserDataResult
@@ -50,7 +42,6 @@ namespace LikesHikes.Application.Logic.Account.GetUserData
                 IsAdmin = await userManager.IsInRoleAsync(user, nameof(UserRole.Admin)),
                 RoutesCount = routesCount,
                 PassedRoutesCount = passedRoutesCount
-                //UserRoutes = userRoutesModels
             };
 
             return userDataResult;

@@ -4,10 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace LikesHikes.Application.Logic.Routs.CreateRout
+namespace LikesHikes.Application.Logic.Routs.CreateOrEditRoute
 {
-    public class CreateRouteRequest : IRequest
+    public class CreateOrEditRouteRequest : IRequest
     {
+        public Guid? RouteId { get; set; }
+
         public string RouteName { get; set; }
 
         public int Duration { get; set; }
@@ -22,6 +24,6 @@ namespace LikesHikes.Application.Logic.Routs.CreateRout
 
         public List<Coordinate> Coordinates { get; set; }
 
-        public Guid? CreatedById { get; set; }
+        public Guid? AppUserId { get; set; }
     }
 }

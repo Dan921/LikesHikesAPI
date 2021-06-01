@@ -1,16 +1,17 @@
 ﻿using Application.Exceptions;
-using LikesHikes.Application.Logic.PersonalArea.CreateReport;
+using LikesHikes.Application.Logic.PersonalArea.CreateOrEditReport;
 using LikesHikes.Application.Logic.PersonalArea.GetReport;
+using LikesHikes.Application.Logic.PersonalArea.GetUserRoutes;
+using LikesHikes.Application.Logic.PersonalArea.GetUserRoutesUsingFilter;
 using LikesHikes.Application.Logic.PersonalArea.MarkRoutePassed;
 using LikesHikes.Application.Logic.PersonalArea.PublishRoute;
 using LikesHikes.Application.Logic.PersonalArea.RemoveReport;
 using LikesHikes.Application.Logic.PersonalArea.RemoveRoute;
-using LikesHikes.Application.Logic.PersonalArea.UpdateReport;
-using LikesHikes.Application.Logic.Routs.CreateRout;
+using LikesHikes.Application.Logic.Routs.CreateOrEditRoute;
 using LikesHikes.Application.Logic.Routs.GetRouteById;
-using LikesHikes.Application.Logic.Routs.UpdateRout;
 using LikesHikes.Application.Models;
 using LikesHikes.Domain.Entities;
+using LikesHikes.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -47,17 +48,17 @@ namespace LikesHikes.Api.Controllers
             return Ok(await mediator.Send(request));
         }
 
-        [HttpPost("CreateReport")]
-        public async Task<IActionResult> CreateReport([FromBody] CreateReportRequest request)
+        [HttpPost("CreateOrEditReport")]
+        public async Task<IActionResult> CreateOrEditReport([FromBody] CreateOrEditReportRequest request)
         {
             request.AppUserId = (await userManager.GetUserAsync(User)).Id;
             return Ok(await mediator.Send(request));
         }
 
-        [HttpPost("CreateRoute")]
-        public async Task<IActionResult> CreateRoute([FromBody] CreateRouteRequest request)
+        [HttpPost("CreateOrEditRoute")]
+        public async Task<IActionResult> CreateRoute([FromBody] CreateOrEditRouteRequest request)
         {
-            request.CreatedById = (await userManager.GetUserAsync(User)).Id;
+            request.AppUserId = (await userManager.GetUserAsync(User)).Id;
             return Ok(await mediator.Send(request));
         }
 
@@ -68,6 +69,25 @@ namespace LikesHikes.Api.Controllers
             { 
                 RouteId = routeId, 
                 AppUserId = (await userManager.GetUserAsync(User))?.Id 
+            }));
+        }
+
+        [HttpGet("GetUserRoutes")]
+        public async Task<IActionResult> GetUserRoutes()
+        {
+            return Ok(await mediator.Send(new GetUserRoutesRequest
+            {
+                AppUserId = (await userManager.GetUserAsync(User))?.Id
+            }));
+        }
+
+        [HttpPost("GetUserRoutesUsingFilter")]
+        public async Task<IActionResult> GetUserRoutesUsingFilter([FromBody] UserRouteFilterModel filter)
+        {
+            return Ok(await mediator.Send(new GetUserRoutesUsingFilterRequest
+            {
+                AppUserId = (await userManager.GetUserAsync(User))?.Id,
+                Filter = filter
             }));
         }
 
@@ -96,20 +116,6 @@ namespace LikesHikes.Api.Controllers
                 AppUserId = (await userManager.GetUserAsync(User))?.Id,
                 RouteId = routeId
             }));
-        }
-
-        [HttpPut("UpdateReport")]
-        public async Task<IActionResult> UpdateReport([FromBody] UpdateReportRequest request)
-        {
-            request.AppUserId = (await userManager.GetUserAsync(User))?.Id;
-            return Ok(await mediator.Send(request));
-        }
-
-        [HttpPut("UpdateRoute")]
-        public async Task<IActionResult> UpdateRoute([FromBody] UpdateRouteRequest request)
-        {
-            request.AppUserId = (await userManager.GetUserAsync(User))?.Id;
-            return Ok(await mediator.Send(request));
         }
     }
 }

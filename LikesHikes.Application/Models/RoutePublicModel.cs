@@ -23,7 +23,12 @@ namespace LikesHikes.Application.Models
 
             Complexity = route.Complexity.ToString();
             Region = route.Region;
-            KeyPoints = route.KeyPoints;
+
+            if (route.KeyPoints.Length > 100)
+                KeyPoints = route.KeyPoints.Substring(0, 100) + "...";
+            else
+                KeyPoints = route.KeyPoints;
+
             Coordinates = JsonSerializer.Deserialize<List<Coordinate>>(route.Coordinates);
             Rating = route.Rating;
         }
@@ -46,7 +51,7 @@ namespace LikesHikes.Application.Models
 
         public List<Coordinate> Coordinates { get; set; }
 
-        public float Rating { get; set; }
+        public float? Rating { get; set; }
 
         public bool UserHas { get; set; }
     }

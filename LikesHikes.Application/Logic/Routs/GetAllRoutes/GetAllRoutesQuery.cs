@@ -21,9 +21,10 @@ namespace LikesHikes.Application.Logic.Routs.GetRoutes
 
         public async Task<IEnumerable<RoutePublicModel>> Handle(GetAllRoutesRequest request, CancellationToken cancellationToken)
         {
-            var allRoutesModels = (await unitOfWork.RouteRepository.GetRoutesUsingFilter(request.RouteFilter))
+            var allRoutesModels = (await unitOfWork.RouteRepository.GetAll())
                 .Where(p => p.IsPublished)
-                .Select(p => new RoutePublicModel(p));
+                .Select(p => new RoutePublicModel(p))
+                .ToList();
 
             if (request.AppUserId != null)
             {

@@ -29,6 +29,11 @@ namespace LikesHikes.Application.Logic.PersonalArea.PublishRoute
             {
                 var route = await unitOfWork.RouteRepository.GetById(request.RouteId);
 
+                if (route.IsBanned)
+                {
+                    throw new RestException("Маршрут заблокирован администрацией");
+                }
+
                 route.IsPublished = true;
 
                 await unitOfWork.RouteRepository.Update(route);

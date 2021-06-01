@@ -26,6 +26,7 @@ namespace Data.DAL
         public IGenericRepository<RouteReview> RouteReviewRepository => new GenericRepository<RouteReview>(context);
         public IGenericRepository<UserRoute> UserRouteRepository => new GenericRepository<UserRoute>(context);
         public IGenericRepository<BlogPostComment> BlogPostCommentRepository => new GenericRepository<BlogPostComment>(context);
+        public IGenericRepository<AppImage> ImageRepository => new GenericRepository<AppImage>(context);
 
         public async Task<int> SaveAsync()
         {

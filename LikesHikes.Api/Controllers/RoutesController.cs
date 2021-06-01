@@ -4,6 +4,7 @@ using LikesHikes.Application.Logic.Routs.AddRouteToUser;
 using LikesHikes.Application.Logic.Routs.CreateRoutReview;
 using LikesHikes.Application.Logic.Routs.GetRouteById;
 using LikesHikes.Application.Logic.Routs.GetRoutes;
+using LikesHikes.Application.Logic.Routs.GetRoutesUsingFilter;
 using LikesHikes.Application.Logic.Routs.RemoveRout;
 using LikesHikes.Application.Logic.Routs.RemoveRouteReview;
 using LikesHikes.Application.Models;
@@ -47,12 +48,22 @@ namespace LikesHikes.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("GetAllRoutes")]
-        public async Task<IActionResult> GetAllRoutes([FromQuery] RouteFilterModel filter)
+        public async Task<IActionResult> GetAllRoutes()
         {
             return Ok(await mediator.Send(new GetAllRoutesRequest 
             {
+                AppUserId = (await userManager.GetUserAsync(User))?.Id
+            }));
+        }
+
+        [AllowAnonymous]
+        [HttpPost("GetRoutesUsingFilter")]
+        public async Task<IActionResult> GetRoutesUsingFilter([FromBody] RouteFilterModel filter)
+        {
+            return Ok(await mediator.Send(new GetRoutesUsingFilterRequest
+            {
                 AppUserId = (await userManager.GetUserAsync(User))?.Id,
-                RouteFilter = filter 
+                RouteFilter = filter
             }));
         }
 
@@ -77,7 +88,13 @@ namespace LikesHikes.Api.Controllers
         [HttpDelete("RemoveRouteReview")]
         public async Task<IActionResult> RemoveRouteReview([FromQuery] Guid routeReviewId)
         {
-            return Ok(await mediator.Send(new RemoveRouteReviewRequest { Id = routeReviewId }));
+            var user = await userManager.GetUserAsync(User);
+            return Ok(await mediator.Send(new RemoveRouteReviewRequest 
+            { 
+                Id = routeReviewId,
+                AppUserId = user?.Id,
+                IsAdmin = await userManager.IsInRoleAsync(user, nameof(UserRole.Admin))
+            }));
         }
 
         [HttpPost("AddRouteToUser")]

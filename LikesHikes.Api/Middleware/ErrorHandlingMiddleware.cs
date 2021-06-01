@@ -43,7 +43,6 @@ namespace API.Middleware
                     errors = rest.Errors;
                     context.Response.StatusCode = (int)rest.Code;
                     break;
-                // ReSharper disable once PatternAlwaysOfType
                 case Exception e:
                     logger.LogError(ex, "Server error");
                     //errors = string.IsNullOrWhiteSpace(e.Message) ? "Server error" : e.Message;

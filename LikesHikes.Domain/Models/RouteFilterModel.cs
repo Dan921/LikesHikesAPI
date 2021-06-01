@@ -6,9 +6,9 @@ namespace LikesHikes.Domain.Models
 {
     public class RouteFilterModel
     {
-        public string Name { get; set; }
+        public string NameRoute { get; set; }
 
-        public Complexity? Complexity { get; set; }
+        public string Complexity { get; set; }
 
         public string Region { get; set; }
 

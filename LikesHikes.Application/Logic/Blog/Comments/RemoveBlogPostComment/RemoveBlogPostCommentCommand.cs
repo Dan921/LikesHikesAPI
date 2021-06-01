@@ -21,6 +21,7 @@ namespace LikesHikes.Application.Logic.Blog.RemoveBlogPostComment
         public async Task<Unit> Handle(RemoveBlogPostCommentRequest request, CancellationToken cancellationToken)
         {
             var comment = await unitOfWork.BlogPostCommentRepository.GetById(request.Id);
+
             if (comment == null)
             {
                 throw new RestException("Комментарий не найден");

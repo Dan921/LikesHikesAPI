@@ -12,7 +12,8 @@ namespace LikesHikes.Application.Models
             Id = post.Id;
             Heading = post.Heading;
             Text = post.Text;
-            PublishingDate = post.PublishingDate.ToString("dd/MM/yyyy");
+            PublishingDate = post.PublishingDate.ToString("dd.MM.yyyy");
+            AppImageId = post.AppImageId;
         }
 
         public Guid Id { get; set; }
@@ -22,5 +23,7 @@ namespace LikesHikes.Application.Models
         public string Text { get; set; }
 
         public string PublishingDate { get; set; }
+
+        public Guid? AppImageId { get; set; }
     }
 }

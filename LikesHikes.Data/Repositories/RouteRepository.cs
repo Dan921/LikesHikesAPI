@@ -22,13 +22,24 @@ namespace LikesHikes.Data.Repositories
             IQueryable<Route> routes = context.Routes;
             if (routeFilterModel != null)
             {
-                if (!string.IsNullOrEmpty(routeFilterModel.Name))
+                if (!string.IsNullOrEmpty(routeFilterModel.NameRoute))
                 {
-                    routes = routes.Where(a => a.Name.Contains(routeFilterModel.Name));
+                    routes = routes.Where(a => a.Name.Contains(routeFilterModel.NameRoute));
                 }
                 if (routeFilterModel.Complexity != null)
                 {
-                    routes = routes.Where(a => a.Complexity == routeFilterModel.Complexity);
+                    if(routeFilterModel.Complexity == "Легкий")
+                    {
+                        routes = routes.Where(a => a.Complexity == Complexity.Easy);
+                    }
+                    if (routeFilterModel.Complexity == "Средний")
+                    {
+                        routes = routes.Where(a => a.Complexity == Complexity.Medium);
+                    }
+                    if (routeFilterModel.Complexity == "Сложный")
+                    {
+                        routes = routes.Where(a => a.Complexity == Complexity.Difficult);
+                    }
                 }
                 if (!string.IsNullOrEmpty(routeFilterModel.Region))
                 {
@@ -40,7 +51,51 @@ namespace LikesHikes.Data.Repositories
                 }
                 if (routeFilterModel.Rating != null)
                 {
-                    routes = routes.Where(a => a.Rating > routeFilterModel.Rating);
+                    routes = routes.Where(a => a.Rating >= routeFilterModel.Rating);
+                }
+            }
+            return Task.FromResult(routes);
+        }
+
+        public Task<IQueryable<Route>> GetUserRoutesUsingFilter(UserRouteFilterModel userRouteFilterModel)
+        {
+            IQueryable<Route> routes = context.Routes;
+            if (userRouteFilterModel != null)
+            {
+                if (!string.IsNullOrEmpty(userRouteFilterModel.NameRoute))
+                {
+                    routes = routes.Where(a => a.Name.Contains(userRouteFilterModel.NameRoute));
+                }
+                if (userRouteFilterModel.Complexity != null)
+                {
+                    if (userRouteFilterModel.Complexity == "Легкий")
+                    {
+                        routes = routes.Where(a => a.Complexity == Complexity.Easy);
+                    }
+                    if (userRouteFilterModel.Complexity == "Средний")
+                    {
+                        routes = routes.Where(a => a.Complexity == Complexity.Medium);
+                    }
+                    if (userRouteFilterModel.Complexity == "Сложный")
+                    {
+                        routes = routes.Where(a => a.Complexity == Complexity.Difficult);
+                    }
+                }
+                if (!string.IsNullOrEmpty(userRouteFilterModel.Region))
+                {
+                    routes = routes.Where(a => a.Region.Contains(userRouteFilterModel.Region));
+                }
+                if (!string.IsNullOrEmpty(userRouteFilterModel.KeyPoints))
+                {
+                    routes = routes.Where(a => a.KeyPoints.Contains(userRouteFilterModel.KeyPoints));
+                }
+                if (userRouteFilterModel.IsPublished != null)
+                {
+                    routes = routes.Where(a => a.IsPublished == userRouteFilterModel.IsPublished);
+                }
+                if (userRouteFilterModel.Rating != null)
+                {
+                    routes = routes.Where(a => a.Rating >= userRouteFilterModel.Rating);
                 }
             }
             return Task.FromResult(routes);

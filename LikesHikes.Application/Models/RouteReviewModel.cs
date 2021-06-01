@@ -14,7 +14,7 @@ namespace LikesHikes.Application.Models
             Rating = review.Rating;
             Time = review.Time.Date.ToString("dd/MM/yyyy");
             AppUserId = review.AppUserId;
-            //AuthorName = review.
+            AuthorName = "Пользователь";
             RouteId = review.RouteId;
         }
 

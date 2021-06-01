@@ -27,7 +27,12 @@ namespace LikesHikes.Application.Logic.PersonalArea.MarkRoutePassed
 
             if (userRoute != null)
             {
-                userRoute.IsPassed = !userRoute.IsPassed;
+                if (userRoute.IsPassed)
+                {
+                    throw new RestException("Маршрут уже пройден");
+                }
+
+                userRoute.IsPassed = true;
 
                 await unitOfWork.UserRouteRepository.Update(userRoute);
 

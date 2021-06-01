@@ -23,10 +23,16 @@ namespace LikesHikes.Application.Models
 
             Complexity = route.Complexity.ToString();
             Region = route.Region;
-            KeyPoints = route.KeyPoints;
+
+            if (route.KeyPoints.Length > 100)
+                KeyPoints = route.KeyPoints.Substring(0, 100) + "...";
+            else
+                KeyPoints = route.KeyPoints;
+
             Coordinates = JsonSerializer.Deserialize<List<Coordinate>>(route.Coordinates);
             Rating = route.Rating;
             IsPublished = route.IsPublished;
+            AuthorName = route.CreatedBy.UserName;
         }
 
         public Guid Id { get; set; }
@@ -47,10 +53,14 @@ namespace LikesHikes.Application.Models
 
         public List<Coordinate> Coordinates { get; set; }
 
-        public float Rating { get; set; }
+        public float? Rating { get; set; }
 
         public bool ReportExists { get; set; }
 
         public bool IsPublished { get; set; }
+
+        public bool IsPassed { get; set; }
+
+        public string AuthorName { get; set; }
     }
 }

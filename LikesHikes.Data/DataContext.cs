@@ -24,5 +24,13 @@ namespace LikesHikes.Data
         public DbSet<Route> Routes { get; protected set; }
         public DbSet<RouteReview> RouteReviews { get; protected set; }
         public DbSet<UserRoute> UsersRoutes { get; protected set; }
+        public DbSet<AppImage> Images { get; protected set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+
     }
+
 }

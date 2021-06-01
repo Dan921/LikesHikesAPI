@@ -19,6 +19,10 @@ namespace LikesHikes.Domain.Entities
         public DateTime PublishingDate { get; set; }
 
 
+        public Guid? AppImageId { get; set; }
+
+        public virtual AppImage AppImage { get; set; }
+
         public virtual IEnumerable<BlogPostComment> BlogPostComments { get; set; }
     }
 }

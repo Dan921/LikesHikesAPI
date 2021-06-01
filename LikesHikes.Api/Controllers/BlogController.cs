@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -48,9 +50,9 @@ namespace LikesHikes.Api.Controllers
 
         [AuthorizeRoles(UserRole.Admin)]
         [HttpDelete("Delete")]
-        public async Task<IActionResult> DeleteBlogPost([FromQuery] Guid routeId)
+        public async Task<IActionResult> DeleteBlogPost([FromQuery] Guid postId)
         {
-            return Ok(await mediator.Send(new RemoveBlogPostRequest { Id = routeId }));
+            return Ok(await mediator.Send(new RemoveBlogPostRequest { Id = postId }));
         }
 
         [AllowAnonymous]

@@ -10,7 +10,5 @@ namespace LikesHikes.Application.Logic.Routs.GetRoutes
     public class GetAllRoutesRequest : IRequest<IEnumerable<RoutePublicModel>>
     {
         public Guid? AppUserId { get; set; }
-
-        public RouteFilterModel RouteFilter { get; set; }
     }
 }

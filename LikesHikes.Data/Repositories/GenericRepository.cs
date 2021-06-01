@@ -43,9 +43,16 @@ namespace LikesHikes.Data
             return Task.CompletedTask;
         }
 
+        public Task DeleteRange(IQueryable<TEntity> entities)
+        {
+            dbSet.RemoveRange(entities);
+            return Task.CompletedTask;
+        }
+
         public Task Update(TEntity entityToUpdate)
         {
-            dbSet.Update(entityToUpdate);
+            dbSet.Attach(entityToUpdate);
+            context.Entry(entityToUpdate).State = EntityState.Modified;
             return Task.CompletedTask;
         }
     }

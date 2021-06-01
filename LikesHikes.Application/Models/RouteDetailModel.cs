@@ -24,7 +24,7 @@ namespace LikesHikes.Application.Models
             Coordinates = JsonSerializer.Deserialize<List<Coordinate>>(route.Coordinates);
             Rating = route.Rating;
             AuthorName = route.CreatedBy.UserName;
-            RouteReviewModels = route.RouteReviews.Select(p => new RouteReviewModel(p));
+            RouteReviews = route.RouteReviews.Select(p => new RouteReviewModel(p));
         }
 
         public Guid Id { get; set; }
@@ -47,10 +47,12 @@ namespace LikesHikes.Application.Models
 
         public List<Coordinate> Coordinates { get; set; }
 
-        public float Rating { get; set; }
+        public float? Rating { get; set; }
 
         public string AuthorName { get; set; }
 
-        public IEnumerable<RouteReviewModel> RouteReviewModels { get; set; }
+        public RouteReviewModel UserReview { get; set; }
+
+        public IEnumerable<RouteReviewModel> RouteReviews { get; set; }
     }
 }

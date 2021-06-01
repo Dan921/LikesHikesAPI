@@ -13,5 +13,6 @@ namespace LikesHikes.Domain
         Task Create(TEntity entity);
         Task Update(TEntity entityToUpdate);
         Task Remove(Guid id);
+        Task DeleteRange(IQueryable<TEntity> entities);
     }
 }

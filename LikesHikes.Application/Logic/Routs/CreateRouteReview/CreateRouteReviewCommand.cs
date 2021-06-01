@@ -4,6 +4,7 @@ using LikesHikes.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,9 +24,16 @@ namespace LikesHikes.Application.Logic.Routs.CreateRoutReview
         {
             var route = await unitOfWork.RouteRepository.GetById(request.RouteId);
 
-            if(route == null)
+            if(route == null || route.IsPublished == false)
             {
                 throw new RestException("Маршрут не найден");
+            }
+
+            if((await unitOfWork.RouteReviewRepository.GetAll())
+                .Where(p => p.AppUserId == request.AppUserId &&
+                p.RouteId == request.RouteId).Any())
+            {
+                throw new RestException("Отзыв уже существует");
             }
 
             var routeReview = new RouteReview()
@@ -37,21 +45,31 @@ namespace LikesHikes.Application.Logic.Routs.CreateRoutReview
                 RouteId = request.RouteId
             };
 
-            route.Rating = (route.Rating * route.CountOfVoces + routeReview.Rating) / (route.CountOfVoces + 1);
-            route.CountOfVoces++;
-
             await unitOfWork.RouteReviewRepository.Create(routeReview);
-
-            await unitOfWork.RouteRepository.Update(route);
 
             var success = await unitOfWork.SaveAsync() > 0;
 
             if (success)
             {
-                return Unit.Value;
+                if(route.Rating == null)
+                    route.Rating = 0;
+
+                route.Rating = (route.Rating * route.CountOfVoces + routeReview.Rating) / (route.CountOfVoces + 1);
+                route.CountOfVoces++;
+
+                await unitOfWork.RouteRepository.Update(route);
+
+                success = await unitOfWork.SaveAsync() > 0;
+
+                if (success)
+                {
+                    return Unit.Value;
+                }
+
+                throw new RestException("Ошибка при обновлении маршрута. Отзыв добавлен");
             }
 
-            throw new Exception();
+            throw new RestException("Ошибка при создании отзыва");
         }
     }
 }

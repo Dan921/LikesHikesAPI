@@ -1,9 +1,11 @@
 ﻿using Data.DAL;
+using LikesHikes.Application.Helpers;
 using LikesHikes.Domain;
 using LikesHikes.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;

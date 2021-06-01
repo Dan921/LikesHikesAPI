@@ -15,6 +15,7 @@ namespace LikesHikes.Application.Models
             Text = post.Text;
             PublishingDate = post.PublishingDate.ToString("dd/MM/yyyy");
             Comments = post.BlogPostComments.Select(p => new BlogPostCommentModel(p));
+            AppImagesId = post.AppImageId;
         }
 
         public Guid Id { get; set; }
@@ -24,6 +25,8 @@ namespace LikesHikes.Application.Models
         public string Text { get; set; }
 
         public string PublishingDate { get; set; }
+
+        public Guid? AppImagesId { get; set; }
 
         public IEnumerable<BlogPostCommentModel> Comments { get; set; }
     }
